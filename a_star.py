@@ -150,6 +150,9 @@ def calc_path(maze_matrix, start, end):
     # Si conseguimos llegar al destino final, retornamos la ruta
     if current_node == end_node:
         return return_path(current_node, maze)
+    # Si no conseguimos llegar al destino final
+    else:
+        print('No se ha encontrado camino')
 
     #Tu codigo aqui
 
