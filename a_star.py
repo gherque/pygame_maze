@@ -88,9 +88,12 @@ def calc_path(maze_matrix, start, end):
 
     opened_list.append(start_node)
 
+    # Mientras haya nodos abiertos
     while(len(opened_list)):
         current_index = 0
         f = 1000000
+
+        # Buscamos el nodo abierto con menor f
         for index, open_node in enumerate(opened_list):
             if open_node.f < f:
                 f = open_node.f
@@ -100,34 +103,51 @@ def calc_path(maze_matrix, start, end):
         opened_list.pop(current_index)
         closed_list.append(current_node)
 
+        # Comprobamos los 4 posibles movimientos
         for movement in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
             destination_node = Node(current_node, (current_node.position[0] + movement[0], current_node.position[1] + movement[1]))
+
+            # Si el nodo destino está fuera de los límites del laberinto, no lo tenemos en cuenta
+            if destination_node.position[0] > (len(maze_matrix) - 1) or destination_node.position[0] < 0 or destination_node.position[1] > (len(maze_matrix[len(maze_matrix)-1]) -1) or destination_node.position[1] < 0:
+                continue
+
+            # Si llegamos al destino final paramos
             if destination_node.position == end_node.position:
                 current_node = destination_node
                 opened_list.clear()
                 break
 
+            # Si el nodo destino no es pisable, no lo tenemos en cuenta
             if maze_matrix[destination_node.position[0]][destination_node.position[1]] != 0:
                 continue
 
+            # Si el nodo destino ya está en los cerrados, no lo tenemos en cuenta
+            is_in_closed_list = False
             for closed_child in closed_list:
-                if destination_node == closed_child:
-                    continue
+                if destination_node.position == closed_child.position:
+                    is_in_closed_list = True
+            if is_in_closed_list:
+                continue
 
+            # Comprobamos si existe el nodo destino en los abiertos
             index_on_open_nodes = -1
             for index, open_node in enumerate(opened_list):
-                if destination_node == open_node:
+                if destination_node.position == open_node.position:
                     index_on_open_nodes = index
 
+            # Calculamos g, h y f
             destination_node.g = current_node.g + 1
             destination_node.h = manhattan_distance(destination_node.position, end_node.position)
             destination_node.f = destination_node.g + destination_node.h
 
+            # Si no existía en los abiertos, lo ponemos
             if index_on_open_nodes == -1:
                 opened_list.append(destination_node)
+            # Si existía en los abiertos pero la g nueva es menor, modificamos el nodo
             elif destination_node.g < opened_list[index_on_open_nodes].g:
                 opened_list[index_on_open_nodes] = destination_node
 
+    # Si conseguimos llegar al destino final, retornamos la ruta
     if current_node == end_node:
         return return_path(current_node, maze)
 
