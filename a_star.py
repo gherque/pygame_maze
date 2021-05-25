@@ -100,6 +100,10 @@ def calc_path(maze_matrix, start, end):
                 current_node = open_node
                 current_index = index
 
+        # Si llegamos al destino final paramos
+        if current_node.position == end_node.position:
+            break
+
         opened_list.pop(current_index)
         closed_list.append(current_node)
 
@@ -110,12 +114,6 @@ def calc_path(maze_matrix, start, end):
             # Si el nodo destino está fuera de los límites del laberinto, no lo tenemos en cuenta
             if destination_node.position[0] > (len(maze_matrix) - 1) or destination_node.position[0] < 0 or destination_node.position[1] > (len(maze_matrix[len(maze_matrix)-1]) -1) or destination_node.position[1] < 0:
                 continue
-
-            # Si llegamos al destino final paramos
-            if destination_node.position == end_node.position:
-                current_node = destination_node
-                opened_list.clear()
-                break
 
             # Si el nodo destino no es pisable, no lo tenemos en cuenta
             if maze_matrix[destination_node.position[0]][destination_node.position[1]] != 0:
@@ -153,8 +151,6 @@ def calc_path(maze_matrix, start, end):
     # Si no conseguimos llegar al destino final
     else:
         print('No se ha encontrado camino')
-
-    #Tu codigo aqui
 
 def euclidean_distance(src, dst):
     x_dist = abs(src[0] - dst[0])
